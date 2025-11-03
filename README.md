@@ -1,5 +1,16 @@
 # Over-the-Air Semantic Alignment via Stacked Intelligent Metasurfaces
 
+<h5 align="center">
+     
+ 
+[![arXiv](https://img.shields.io/badge/Arxiv-2412.11959-b31b1b.svg?logo=arXiv)](https://arxiv.org/abs/2412.11959)
+[![License](https://img.shields.io/badge/Code%20License-MIT-yellow)](https://github.com/PKU-YuanGroup/LanguageBind/blob/main/LICENSE)
+
+ <br>
+
+</h5>
+
+
 > [!TIP]
 > .
 
@@ -117,6 +128,8 @@ You're ready to go! 🚀
 ## Authors
 
 - [Mario Edoardo Pandolfo](https://scholar.google.com/citations?user=wAeScL8AAAAJ&hl)
+- [Kyriakos Stylianopoulos](https://scholar.google.com/citations?user=42KAgRMAAAAJ&hl=it&oi=ao)
+- [George C. Alexandropoulos](https://scholar.google.com/citations?hl=it&user=3Ltyd9sAAAAJ)
 - [Paolo Di Lorenzo](https://scholar.google.com/citations?hl=en&user=VZYvspQAAAAJ)
 
 ## Used Technologies

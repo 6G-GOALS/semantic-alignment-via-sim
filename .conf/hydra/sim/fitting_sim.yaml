@@ -1,0 +1,51 @@
+defaults:
+  - _self_
+
+seed: 42
+device: cpu
+simulation: example
+
+alignment:
+  type: 'Linear'
+  n_clusters: 40
+  n_proto: 100
+  lmb: 0
+  weighted: null
+  
+datamodule:
+  dataset: cifar10
+  train_label_size: 4200
+  method: random
+  grouping: label
+  workers: 0
+  batch_size: 512
+
+channel:
+  snr_db: null
+
+models:
+  transmitter: vit_small_patch16_224
+  receiver: vit_base_patch16_224
+
+sim:
+  layers: 1
+  meta_atoms_input_x: 16
+  meta_atoms_input_y: 12
+  meta_atoms_output_x: 24
+  meta_atoms_output_y: 16
+  meta_atoms_intermediate_x: 2
+  meta_atoms_intermediate_y: 2
+  wavelength: 0.005
+  thickness: ${eval:"10 * ${sim.wavelength} * ${sim.layers}"}
+  max_iters: 500
+  lr: 1e-1
+  decay: 0.8
+  meta_atom_spacing_input_x: ${eval:"${sim.wavelength}"}
+  meta_atom_spacing_input_y: ${eval:"${sim.wavelength}"}
+  meta_atom_spacing_output_x: ${eval:"${sim.wavelength}"}
+  meta_atom_spacing_output_y: ${eval:"${sim.wavelength}"}
+  meta_atom_spacing_intermediate_x: ${eval:"${sim.wavelength} / 2"}
+  meta_atom_spacing_intermediate_y: ${eval:"${sim.wavelength} / 2"}
+  
+wandb:
+  project: semantic_alignment_via_sim

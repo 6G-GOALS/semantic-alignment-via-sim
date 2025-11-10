@@ -7,7 +7,7 @@ simulation: example
 
 alignment:
   type: 'Linear'
-  n_clusters: 40
+  n_clusters: 24
   n_proto: 100
   lmb: 0
   weighted: null
@@ -40,10 +40,10 @@ sim:
   max_iters: 500
   lr: 1e-1
   decay: 0.8
-  meta_atom_spacing_input_x: ${eval:"${sim.wavelength}"}
-  meta_atom_spacing_input_y: ${eval:"${sim.wavelength}"}
-  meta_atom_spacing_output_x: ${eval:"${sim.wavelength}"}
-  meta_atom_spacing_output_y: ${eval:"${sim.wavelength}"}
+  meta_atom_spacing_input_x: ${eval:"${sim.wavelength} / 2"}
+  meta_atom_spacing_input_y: ${eval:"${sim.wavelength} / 2"}
+  meta_atom_spacing_output_x: ${eval:"${sim.wavelength} / 2"}
+  meta_atom_spacing_output_y: ${eval:"${sim.wavelength} / 2"}
   meta_atom_spacing_intermediate_x: ${eval:"${sim.wavelength} / 2"}
   meta_atom_spacing_intermediate_y: ${eval:"${sim.wavelength} / 2"}
   

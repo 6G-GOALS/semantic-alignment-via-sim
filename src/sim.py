@@ -520,8 +520,6 @@ class SIMoptimizerTorch(SIMoptimizer, nn.Module):
         )  # call parent init explicitly
         nn.Module.__init__(self)  # and nn.Module init
 
-        # super().__init__(*args, **kwargs)
-
         # Convert precomputed matrices to torch tensors (complex dtype)
         self.W0 = torch.tensor(self.W0, dtype=torch.cfloat)
         self.W_L = torch.tensor(self.W_L, dtype=torch.cfloat)
@@ -531,14 +529,6 @@ class SIMoptimizerTorch(SIMoptimizer, nn.Module):
 
         # Make phases learnable
         self.phase_shifts = nn.Parameter(torch.rand(self.L, self.M_int))
-        # self.phase_shifts = nn.ParameterList([
-        #     nn.Parameter(torch.rand(self.M_int) * 2 * torch.pi)
-        #     for _ in range(self.L)
-        # ])
-
-        # Trainable complex β (real + imag parts)
-        self.beta_real = nn.Parameter(torch.tensor(1.0))
-        self.beta_imag = nn.Parameter(torch.tensor(0.0))
 
     def _get_intermediate_Y_matrices(self):
         """Build diagonal Υ matrices from phase parameters."""
@@ -579,8 +569,10 @@ class SIMoptimizerTorch(SIMoptimizer, nn.Module):
             optimizer.zero_grad()
 
             G = self._calculate_sim_propagation_G()
-            beta = torch.complex(self.beta_real, self.beta_imag)
-
+            beta = self.calculate_optimal_beta(
+                G.detach().cpu().numpy(), F_target.cpu().resolve_conj().numpy()
+            )
+            beta = torch.from_numpy(beta).to(torch.complex64)
             loss = torch.norm(beta * G - F_target, p='fro') ** 2 / (
                 self.N_out * self.N_in
             )

@@ -175,7 +175,7 @@ def main(cfg: DictConfig) -> None:
     alignment_type: str = cfg.alignment.type
     n_proto: int = int(cfg.alignment.n_proto)
     n_clusters: int = int(cfg.alignment.n_clusters)
-    uuid: str = f'{cfg.seed}_{cfg.datamodule.dataset}_{cfg.alignment.type}_{cfg.channel.snr_db}_{n_proto}_{cfg.sim.layers}_{cfg.sim.wavelength}_{cfg.alignment.lmb}_{cfg.alignment.weighted}_{cfg.sim.meta_atoms_intermediate_x}_{cfg.sim.meta_atoms_intermediate_y}_{cfg.datamodule.train_label_size}_{cfg.datamodule.grouping}_{cfg.datamodule.method}_{cfg.simulation}'
+    uuid: str = f'{cfg.seed}_{cfg.datamodule.dataset}_{cfg.alignment.type}_{cfg.channel.snr_db}_{n_proto}_{cfg.sim.layers}_{cfg.sim.wavelength}_{cfg.alignment.lmb}_{cfg.alignment.n_clusters}_{cfg.alignment.weighted}_{cfg.sim.meta_atoms_intermediate_x}_{cfg.sim.meta_atoms_intermediate_y}_{cfg.datamodule.train_label_size}_{cfg.datamodule.grouping}_{cfg.datamodule.method}_{cfg.simulation}'
 
     # Safe way to avoid duplicate registration
     if not OmegaConf.has_resolver('eval'):

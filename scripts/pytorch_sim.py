@@ -339,6 +339,21 @@ def main(cfg: DictConfig) -> None:
             if weighted is not None:
                 alignment_type += ' ' + weighted
 
+        case 'Procrustes':
+            A = ridge_regression(input, output, weights=weights, lmb=lmb)
+
+            # Get the decomposition
+            U, _, Vh = torch.linalg.svd(A, full_matrices=False)
+
+            # Procrustes solution
+            A = U @ Vh
+
+            n_proto = None
+            n_clusters = None
+
+            if weighted is not None:
+                alignment_type += ' ' + weighted
+
         case 'PPFE':
             A = ppfe(
                 input,

@@ -167,6 +167,10 @@ def main(cfg: DictConfig) -> None:
     # Create directories
     RESULTS_PATH.mkdir(exist_ok=True, parents=True)
 
+    # Safe way to avoid duplicate registration
+    if not OmegaConf.has_resolver('eval'):
+        OmegaConf.register_new_resolver('eval', eval)
+
     # Define some variables
     lmb: float = cfg.alignment.lmb
     weighted: str = cfg.alignment.weighted
@@ -174,10 +178,6 @@ def main(cfg: DictConfig) -> None:
     n_proto: int = int(cfg.alignment.n_proto)
     n_clusters: int = int(cfg.alignment.n_clusters)
     uuid: str = f'{cfg.seed}_{cfg.datamodule.dataset}_{cfg.alignment.type}_{cfg.channel.snr_db}_{n_proto}_{cfg.sim.layers}_{cfg.sim.wavelength}_{cfg.alignment.lmb}_{cfg.alignment.n_clusters}_{cfg.alignment.weighted}_{cfg.sim.thickness}_{cfg.sim.meta_atoms_intermediate_x}_{cfg.sim.meta_atoms_intermediate_y}_{cfg.sim.meta_atom_spacing_input_x}_{cfg.sim.meta_atom_spacing_input_y}_{cfg.sim.meta_atom_spacing_output_x}_{cfg.sim.meta_atom_spacing_output_y}_{cfg.sim.meta_atom_spacing_intermediate_x}_{cfg.sim.meta_atom_spacing_intermediate_y}_{cfg.datamodule.train_label_size}_{cfg.datamodule.grouping}_{cfg.datamodule.method}_{cfg.simulation}'
-
-    # Safe way to avoid duplicate registration
-    if not OmegaConf.has_resolver('eval'):
-        OmegaConf.register_new_resolver('eval', eval)
 
     # Define some variables
     trainer: Trainer = Trainer(

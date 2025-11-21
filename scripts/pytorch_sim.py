@@ -163,11 +163,9 @@ def main(cfg: DictConfig) -> None:
     CURRENT: Path = Path('.')
     MODEL_PATH: Path = CURRENT / 'models'
     RESULTS_PATH: Path = CURRENT / 'results/linear'
-    # IMG_PATH: Path = CURRENT / f'img/training_loss/{cfg.sim.meta_atoms_intermediate_x}'
 
     # Create directories
     RESULTS_PATH.mkdir(exist_ok=True, parents=True)
-    # IMG_PATH.mkdir(exist_ok=True, parents=True)
 
     # Define some variables
     lmb: float = cfg.alignment.lmb
@@ -175,7 +173,7 @@ def main(cfg: DictConfig) -> None:
     alignment_type: str = cfg.alignment.type
     n_proto: int = int(cfg.alignment.n_proto)
     n_clusters: int = int(cfg.alignment.n_clusters)
-    uuid: str = f'{cfg.seed}_{cfg.datamodule.dataset}_{cfg.alignment.type}_{cfg.channel.snr_db}_{n_proto}_{cfg.sim.layers}_{cfg.sim.wavelength}_{cfg.alignment.lmb}_{cfg.alignment.n_clusters}_{cfg.alignment.weighted}_{cfg.sim.meta_atoms_intermediate_x}_{cfg.sim.meta_atoms_intermediate_y}_{cfg.datamodule.train_label_size}_{cfg.datamodule.grouping}_{cfg.datamodule.method}_{cfg.simulation}'
+    uuid: str = f'{cfg.seed}_{cfg.datamodule.dataset}_{cfg.alignment.type}_{cfg.channel.snr_db}_{n_proto}_{cfg.sim.layers}_{cfg.sim.wavelength}_{cfg.alignment.lmb}_{cfg.alignment.n_clusters}_{cfg.alignment.weighted}_{cfg.sim.thickness}_{cfg.sim.meta_atoms_intermediate_x}_{cfg.sim.meta_atoms_intermediate_y}_{cfg.sim.meta_atom_spacing_input_x}_{cfg.sim.meta_atom_spacing_input_y}_{cfg.sim.meta_atom_spacing_output_x}_{cfg.sim.meta_atom_spacing_output_y}_{cfg.sim.meta_atom_spacing_intermediate_x}_{cfg.sim.meta_atom_spacing_intermediate_y}_{cfg.datamodule.train_label_size}_{cfg.datamodule.grouping}_{cfg.datamodule.method}_{cfg.simulation}'
 
     # Safe way to avoid duplicate registration
     if not OmegaConf.has_resolver('eval'):

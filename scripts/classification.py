@@ -153,7 +153,7 @@ def ridge_regression(
 
 @hydra.main(
     config_path='../.conf/hydra/sim',
-    config_name='fitting_sim',
+    config_name='settings',
     version_base='1.3',
 )
 def main(cfg: DictConfig) -> None:

@@ -36,7 +36,8 @@ sim:
   meta_atoms_intermediate_x: 2
   meta_atoms_intermediate_y: 2
   wavelength: 0.005
-  thickness: ${eval:"10 * ${sim.wavelength} * ${sim.layers}"}
+  thickness_multiplier: 10
+  thickness: ${eval:"${sim.thickness_multiplier} * ${sim.wavelength} * ${sim.layers}"}
   max_iters: 500
   lr: 1e-1
   decay: 0.8

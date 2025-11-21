@@ -249,10 +249,6 @@ def main(cfg: DictConfig) -> None:
     output = complex_compressed_tensor(
         datamodule.train_data.z_rx.H, device=cfg.device
     )
-    # print("Power input", torch.trace(input @ input.H))
-    # print("Power output", torch.trace(output @ output.H))
-    # print('Mean input', torch.mean(input))
-    # print('Mean output', torch.mean(output))
 
     # Prewhitening
     input, L_input, mean_input = prewhiten(input, device=cfg.device)
@@ -274,55 +270,6 @@ def main(cfg: DictConfig) -> None:
                 datamodule.train_data.z_rx.to(cfg.device)
             ).detach()
             weights *= 100
-            # fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(16, 4))
-
-            # # Plot transparent line only (no markers)
-            # ax1.plot(weights.numpy(), linestyle='-', alpha=0.5, color='blue')
-
-            # # Plot opaque markers only
-            # ax1.plot(weights.numpy(), linestyle='None', marker='o', color='blue', alpha=1.0)
-            # ax1.set_xticks([])  # remove x-axis ticks
-            # ax1.set_ylabel('Value')
-            # ax1.set_title('Tensor Dimensions as Line Plot')
-            # ax1.grid(True, axis='y', linestyle='--', alpha=0.6)
-
-            # # Histogram (right)
-            # ax2.hist(weights.numpy(), bins=20, color='skyblue')
-            # ax2.set_title('Histogram of Tensor Values')
-            # ax2.set_xlabel('Value')
-            # ax2.set_ylabel('Frequency')
-            # ax2.set_yscale('log')
-            # ax2.grid(True, linestyle='--', alpha=0.6)
-
-            # import numpy as np
-            # data = weights.numpy()
-            # sorted_data = np.sort(data)
-            # ecdf = np.arange(1, len(data)+1) / len(data)
-            # ax3.step(sorted_data, ecdf, where='post', color='green')
-            # ax3.set_title('ECDF of Tensor Values')
-            # ax3.set_xlabel('Value')
-            # ax3.set_ylabel('ECDF')
-            # ax3.grid(True, linestyle='--', alpha=0.6)
-
-            # # plt.figure(figsize=(8, 4))
-            # # plt.plot(weights.numpy(), marker='o', linestyle='-')
-
-            # # # Add labels and title
-            # # plt.xlabel('Dimension')
-            # # plt.ylabel('Value')
-            # # plt.xticks([])
-            # # plt.tight_layout()
-            # plt.savefig(
-            #     'img/entropy_distribution.pdf',
-            #     format='pdf',
-            #     bbox_inches='tight',
-            # )
-            # plt.savefig(
-            #     'img/entropy_distribution.png',
-            #     bbox_inches='tight',
-            # )
-            # assert False
-            # weights /= weights.sum()
         case None:
             weights = None
         case _:
@@ -370,9 +317,6 @@ def main(cfg: DictConfig) -> None:
                 'The passed alignment type is currently not supported.'
             )
 
-    # U, S, Vh = torch.linalg.svd(A, full_matrices=False)
-    # print(S)
-
     # ============================================================
     #                         SIM
     # ============================================================
@@ -399,10 +343,6 @@ def main(cfg: DictConfig) -> None:
         max_iterations=cfg.sim.max_iters,
         lr=cfg.sim.lr,
     )
-
-    # print(optimized_phase_shifts)
-
-    print('Final best loss:', loss_history[-1])
 
     # Analyze the optimized result
     sim._phase_shifts = optimized_phase_shifts
@@ -479,10 +419,6 @@ def main(cfg: DictConfig) -> None:
     # ============================================================
     # Alignment
     y_hat = A @ test_input
-
-    # print("Power transmitter signal no SIM", torch.trace(y_hat @ y_hat.H))
-    # print("Mean of transmitter signal no SIM", torch.mean(y_hat))
-    # print("Power transmitter message original", torch.trace(output @ output.H))
 
     # Passage through channel
     y_hat = channel @ y_hat
@@ -568,10 +504,6 @@ def main(cfg: DictConfig) -> None:
     # Alignment
     y_hat = simA @ test_input
 
-    # print("Power transmitter signal SIM", torch.trace(y_hat @ y_hat.H))
-    # print("Norm SIM", torch.norm(y_hat))
-    # print("Mean of transmitter signal SIM", torch.mean(y_hat))
-
     # Passage through channel
     y_hat = channel @ y_hat
     if cfg.channel.snr_db is not None:
@@ -605,12 +537,6 @@ def main(cfg: DictConfig) -> None:
     print('MSE Sim A Mimo:', mse_sim_mimo)
     print()
     print()
-
-    # Show a small snippet of the comparison
-    # print("\nTarget matrix snippet (first 4x4):")
-    # print(f"{A[:4, :4]}")
-    # print("Optimized βG matrix snippet (first 4x4):")
-    # print(f"{simA[:4, :4]}")
 
     pl.DataFrame(
         {
@@ -647,8 +573,15 @@ def main(cfg: DictConfig) -> None:
             'SNR [dB]': cfg.channel.snr_db,
             'SIM Layers': cfg.sim.layers,
             'SIM Wavelength': cfg.sim.wavelength,
+            'SIM Thickness': cfg.sim.thickness,
             'SIM Meta Atoms Intermediate X': cfg.sim.meta_atoms_intermediate_x,
             'SIM Meta Atoms Intermediate Y': cfg.sim.meta_atoms_intermediate_y,
+            'SIM Meta Atoms Spacing Input X': cfg.sim.meta_atom_spacing_input_x,
+            'SIM Meta Atoms Spacing Input Y': cfg.sim.meta_atom_spacing_input_y,
+            'SIM Meta Atoms Spacing Output X': cfg.sim.meta_atom_spacing_output_x,
+            'SIM Meta Atoms Spacing Output Y': cfg.sim.meta_atom_spacing_output_y,
+            'SIM Meta Atoms Spacing Intermediate X': cfg.sim.meta_atom_spacing_intermediate_x,
+            'SIM Meta Atoms Spacing Intermediate Y': cfg.sim.meta_atom_spacing_intermediate_y,
             'SIM Learning Rate': cfg.sim.lr,
             'Iterations': cfg.sim.max_iters,
             'Simulation': cfg.simulation,

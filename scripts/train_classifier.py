@@ -20,8 +20,8 @@ from pytorch_lightning.callbacks import (
     BatchSizeFinder,
 )
 
-from src.datamodules import DataModuleClassifier
-from src.neural_models import Classifier
+from src.datamodules.classifier import DataModuleClassifier
+from src.models_tasks.classification import Classifier
 
 
 # =============================================================

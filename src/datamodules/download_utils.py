@@ -32,7 +32,7 @@ def download_zip_from_gdrive(
     """
     CURRENT = Path('.')
     DATA_DIR = CURRENT / path
-    ZIP_PATH = DATA_DIR / f'{name}.zip'
+    ZIP_PATH = DATA_DIR / 'data.zip'
     DIR_PATH = DATA_DIR / f'{name}/'
 
     # Make sure that DATA_DIR exists

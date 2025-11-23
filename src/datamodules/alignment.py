@@ -133,6 +133,8 @@ class DataModuleAlignment(LightningDataModule):
             The name of the encoder transmitter side.
         rx_enc : str
             The name of the encoder transmitter side.
+        task : str
+            The task to perform.
         train_label_size : int
             The size of training dataset to use for each label. Default 4200.
         method : str
@@ -156,6 +158,7 @@ class DataModuleAlignment(LightningDataModule):
         dataset: str,
         tx_enc: str,
         rx_enc: str,
+        task: str,
         train_label_size: int = 4200,
         method: str = 'centroid',
         grouping: str = 'label',
@@ -168,6 +171,7 @@ class DataModuleAlignment(LightningDataModule):
         self.dataset: str = dataset
         self.tx_enc: str = tx_enc
         self.rx_enc: str = rx_enc
+        self.task: str = task
         self.train_label_size: int = train_label_size
         self.method: str = method
         self.grouping: str = grouping
@@ -194,7 +198,7 @@ class DataModuleAlignment(LightningDataModule):
         ID = dotenv_values()['DATA_ID']
 
         # Download and unzip the data
-        download_zip_from_gdrive(ID, name='latents', path='data')
+        download_zip_from_gdrive(ID, name='data', path='data')
 
         return None
 
@@ -212,7 +216,7 @@ class DataModuleAlignment(LightningDataModule):
             None.
         """
         CURRENT = Path('.')
-        GENERAL_PATH: Path = CURRENT / 'data/latents' / self.dataset
+        GENERAL_PATH: Path = CURRENT / f'data/{self.task}' / self.dataset
 
         # ================================================================
         #                         Train Data
@@ -373,6 +377,7 @@ def main() -> None:
     dataset = 'cifar10'
     tx_enc = 'vit_small_patch16_224'
     rx_enc = 'vit_base_patch16_224'
+    task = 'classification'
     train_label_size = 1000
     method = 'centroid'
 
@@ -381,6 +386,7 @@ def main() -> None:
         dataset=dataset,
         tx_enc=tx_enc,
         rx_enc=rx_enc,
+        task=task,
         train_label_size=train_label_size,
         method=method,
     )

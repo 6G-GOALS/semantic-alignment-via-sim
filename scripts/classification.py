@@ -1,4 +1,4 @@
-"""A script for fitting a sim to mimic an alignment matrix A."""
+"""A script for fitting a sim to mimic an alignment matrix A for classification."""
 
 # Add root to the path
 import sys
@@ -83,6 +83,7 @@ def main(cfg: DictConfig) -> None:
         dataset=cfg.datamodule.dataset,
         tx_enc=cfg.models.transmitter,
         rx_enc=cfg.models.receiver,
+        task='classification',
         train_label_size=cfg.datamodule.train_label_size,
         method=cfg.datamodule.method,
         grouping=cfg.datamodule.grouping,
@@ -112,7 +113,7 @@ def main(cfg: DictConfig) -> None:
     # ============================================================
     #                  Classifier Initialization
     # ============================================================
-    # Define the path toweds the classifier
+    # Define the path towards the classifier
     clf_path: Path = (
         MODEL_PATH
         / f'classifiers/{cfg.datamodule.dataset}/{cfg.models.receiver}/seed_{cfg.seed}.ckpt'

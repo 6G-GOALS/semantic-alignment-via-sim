@@ -9,6 +9,7 @@ img/
 *.img
 *.pdf
 *.ckpt
+*.zip
 
 # Python-generated files
 __pycache__/

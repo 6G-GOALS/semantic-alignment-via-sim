@@ -49,9 +49,10 @@ def find_and_rename_ckpt_files(
     return None
 
 
-def download_classifier(
+def download_ckpt(
     org: str,
     project: str,
+    folder: str,
     model_name: str,
     dataset: str,
     seed: int,
@@ -63,6 +64,8 @@ def download_classifier(
             The name of the wandb organization.
         project : str
             The project name.
+        folder : str
+            The folder name.
         model_name : str
             The receiver encoder name.
         dataset : str
@@ -81,7 +84,7 @@ def download_classifier(
     ).download()
     find_and_rename_ckpt_files(
         original_path='artifacts',
-        new_path=f'models/classifiers/{dataset}/{model_name}/',
+        new_path=f'models/{folder}/{dataset}/{model_name}/',
         name=f'seed_{seed}',
     )
     return None
@@ -134,9 +137,10 @@ def main() -> None:
             for dataset in datasets:
                 for model_name in models:
                     for seed in seeds:
-                        download_classifier(
+                        download_ckpt(
                             org=args.org,
                             project=project,
+                            folder='classifiers',
                             model_name=model_name,
                             dataset=dataset,
                             seed=seed,

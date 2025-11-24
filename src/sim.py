@@ -11,10 +11,10 @@ class SIMoptimizer:
     Stacked Intelligent Metasurface (SIM) Optimizer
 
     This class simulates a SIM and optimizes its internal phase shifts to approximate
-    a given target matrix F in the wave domain using electromagnetic wave propagation models.
+    a given target matrix A in the wave domain using electromagnetic wave propagation models.
 
     The optimization minimizes the Frobenius norm of the fitting error between the SIM's
-    overall forward propagation matrix G (scaled by β) and a target matrix F.
+    overall forward propagation matrix G (scaled by β) and a target matrix A.
 
     Supports different input and output plane dimensions.
     """
@@ -282,7 +282,7 @@ class SIMoptimizer:
 
     def _generate_target_2d_matrix(self) -> np.ndarray:
         """
-        Generate standard 2D matrix F for square input/output case.
+        Generate standard 2D matrix A for square input/output case.
 
         Returns:
             2D matrix (only works when N_in = N_out and both are square)
@@ -294,7 +294,7 @@ class SIMoptimizer:
         if self.Nx_in != self.Ny_in:
             raise ValueError('Standard 2D requires square input array')
 
-        F = np.zeros((self.N_out, self.N_in), dtype=complex)
+        A = np.zeros((self.N_out, self.N_in), dtype=complex)
 
         for n in range(1, self.N_out + 1):  # 1-indexed
             for n_hat in range(1, self.N_in + 1):  # 1-indexed
@@ -309,14 +309,14 @@ class SIMoptimizer:
                     -1j * 2 * np.pi * (ny - 1) * (n_hat_y - 1) / self.Ny_in
                 )
 
-                F[n - 1, n_hat - 1] = f_n_n_hat
+                A[n - 1, n_hat - 1] = f_n_n_hat
 
-        return F
+        return A
 
     def _calculate_gradient_for_layer(
         self,
         G_current: np.ndarray,
-        F_target: np.ndarray,
+        A_target: np.ndarray,
         beta_current: complex,
         layer_idx_1_based: int,
     ) -> np.ndarray:
@@ -325,7 +325,7 @@ class SIMoptimizer:
 
         Args:
             G_current: Current G matrix (N_out x N_in)
-            F_target: Target F matrix (N_out x N_in)
+            A_target: Target A matrix (N_out x N_in)
             beta_current: Current scaling factor β
             layer_idx_1_based: Layer index (1-based, from 1 to L)
 
@@ -369,15 +369,15 @@ class SIMoptimizer:
 
             # Get column vectors
             g_n = G_current[:, n - 1]
-            f_n = F_target[:, n - 1]
+            a_n = A_target[:, n - 1]
 
             # Calculate intermediate term for gradient sum
-            # term = np.sum(P_l_n * (beta_current * g_n - f_n)[:, np.newaxis], axis=0)
+            # term = np.sum(P_l_n * (beta_current * g_n - a_n)[:, np.newaxis], axis=0)
             term = np.imag(
                 beta_current.conj()
                 * Y_matrices[l_idx - 1].conj().T
                 @ P_l_n.conj().T
-                @ (beta_current * g_n - f_n)[:, np.newaxis]
+                @ (beta_current * g_n - a_n)[:, np.newaxis]
             )
             gradient += term.flatten()
 
@@ -388,44 +388,44 @@ class SIMoptimizer:
         return gradient
 
     def calculate_optimal_beta(
-        self, G_current: np.ndarray, F_target: np.ndarray
+        self, G_current: np.ndarray, A_target: np.ndarray
     ) -> complex:
         """
         Calculate optimal scaling factor β using least squares method.
 
-        The optimal β minimizes ||βG - F||²_F and is given by:
-        β = (g^H g)^{-1} g^H f
-        where g = vec(G) and f = vec(F), and g^H is the Hermitian (conjugate transpose) of g
+        The optimal β minimizes ||βG - A||²_F and is given by:
+        β = (g^H g)^{-1} g^H a
+        where g = vec(G) and a = vec(A), and g^H is the Hermitian (conjugate transpose) of g
 
         Args:
             G_current: Current SIM propagation matrix (N_out x N_in)
-            F_target: Target matrix (N_out x N_in)
+            A_target: Target matrix (N_out x N_in)
 
         Returns:
             Optimal complex scaling factor β
         """
         # Vectorize matrices
         g = G_current.reshape(-1, 1, order='F')  # vec(G) - column vector
-        f = F_target.reshape(-1, 1, order='F')  # vec(F) - column vector
+        a = A_target.reshape(-1, 1, order='F')  # vec(A) - column vector
 
-        # Calculate least squares solution: β = (g^H g)^{-1} g^H f
-        beta_optimal = np.linalg.inv(g.conj().T @ g) @ (g.conj().T @ f)
+        # Calculate least squares solution: β = (g^H g)^{-1} g^H a
+        beta_optimal = np.linalg.inv(g.conj().T @ g) @ (g.conj().T @ a)
 
         return beta_optimal.flatten()
 
     def optimize_sim_for_target_matrix(
         self,
-        F_target: np.ndarray,
+        A_target: np.ndarray,
         max_iterations: int,
         learning_rate_initial: float,
         learning_rate_decay: float,
         return_loss_curve: bool = False,  # New flag
     ) -> tuple[list[np.ndarray], float, list[float]]:
         """
-        Optimize SIM phase shifts to approximate a given target matrix F.
+        Optimize SIM phase shifts to approximate a given target matrix A.
 
         Args:
-            F_target: Target matrix to approximate (N_out x N_in)
+            A_target: Target matrix to approximate (N_out x N_in)
             max_iterations: Maximum number of optimization iterations
             learning_rate_initial: Initial learning rate
             learning_rate_decay: Learning rate decay factor per iteration
@@ -434,10 +434,10 @@ class SIMoptimizer:
         Returns:
             tuple of (best_phase_shifts, best_loss, [loss history] if return_loss_curve is True)
         """
-        if F_target.shape != (self.N_out, self.N_in):
+        if A_target.shape != (self.N_out, self.N_in):
             raise ValueError(
-                f'F_target must have shape ({self.N_out}, {self.N_in}), '
-                f'got {F_target.shape}'
+                f'A_target must have shape ({self.N_out}, {self.N_in}), '
+                f'got {A_target.shape}'
             )
 
         current_learning_rate = learning_rate_initial
@@ -450,9 +450,9 @@ class SIMoptimizer:
         for iteration in tqdm(range(max_iterations)):
             G_current = self._calculate_sim_propagation_G()
             row, col = G_current.shape
-            beta = self.calculate_optimal_beta(G_current, F_target)
+            beta = self.calculate_optimal_beta(G_current, A_target)
             current_loss = (
-                np.linalg.norm(beta * G_current - F_target, 'fro') ** 2
+                np.linalg.norm(beta * G_current - A_target, 'fro') ** 2
             )
             current_loss /= row * col
             loss_history.append(current_loss)
@@ -470,7 +470,7 @@ class SIMoptimizer:
             maximum = 0
             for l_idx in range(self.L):
                 gradient_l = self._calculate_gradient_for_layer(
-                    G_current, F_target, beta, l_idx + 1
+                    G_current, A_target, beta, l_idx + 1
                 )
                 self._phase_shifts[l_idx] -= current_learning_rate * gradient_l
                 self._phase_shifts[l_idx] = np.fmod(
@@ -504,9 +504,9 @@ class SIMoptimizer:
         Optimize SIM phase shifts to approximate 2D matrix (legacy method).
         Only works when input and output dimensions are equal and square.
         """
-        F_target = self._generate_target_2d_matrix()
+        A_target = self._generate_target_2d_matrix()
         return self.optimize_sim_for_target_matrix(
-            F_target,
+            A_target,
             max_iterations,
             learning_rate_initial,
             learning_rate_decay,
@@ -556,11 +556,11 @@ class SIMoptimizerTorch(SIMoptimizer, nn.Module):
         G = self.W_L @ G
         return G
 
-    def optimize_with_torch(self, F_target, max_iterations=200, lr=1e-2):
+    def optimize_with_torch(self, A_target, max_iterations=200, lr=1e-2):
         """
         Optimize SIM phase shifts using PyTorch autograd.
         """
-        F_target = torch.tensor(F_target, dtype=torch.cdouble)
+        A_target = torch.tensor(A_target, dtype=torch.cdouble)
 
         optimizer = optim.Adam(self.parameters(), lr=lr)
         loss_history = []
@@ -570,10 +570,10 @@ class SIMoptimizerTorch(SIMoptimizer, nn.Module):
 
             G = self._calculate_sim_propagation_G()
             beta = self.calculate_optimal_beta(
-                G.detach().cpu().numpy(), F_target.cpu().resolve_conj().numpy()
+                G.detach().cpu().numpy(), A_target.cpu().resolve_conj().numpy()
             )
             beta = torch.from_numpy(beta).to(torch.complex64)
-            loss = torch.norm(beta * G - F_target, p='fro') ** 2 / (
+            loss = torch.norm(beta * G - A_target, p='fro') ** 2 / (
                 self.N_out * self.N_in
             )
 

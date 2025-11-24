@@ -2,11 +2,7 @@
 
 The script expects to have the results saved in the following structure (both linear and baseline results):
 |_ results/
-    |_ neural/
-    |   |_ r1.parquet
-    |   |_ ...
-    |   |_ rk.parquet
-    |_ linear/
+    |_ classification/
        |_ r1.parquet
        |_ ...
        |_ rk.parquet
@@ -26,22 +22,30 @@ def accuracy_vs_simlayers(
     """ """
     filter = (
         (pl.col('Simulation') == 'accuracyVSsimlayers')
-        &
-        # (pl.col('Weighted').is_null()) &
-        (pl.col('Dataset') == dataset)
+        & (pl.col('Alignment Type').is_in({'PPFE', 'Linear'}))
+        & (pl.col('Dataset') == dataset)
+        & (pl.col('Thickness Multiplier') == 10)
     )
 
-    ticks = df.filter(filter)['SIM Layers'].unique().to_list()
+    df = df.filter(filter)
+
+    ticks = df['SIM Layers'].unique().to_list()
 
     original_acc = (
-        df.filter(filter)
-        .select('Accuracy No Mismatch')
+        df.select('Accuracy No Mismatch')
         .unique('Accuracy No Mismatch')
         .mean()
         .item()
     )
+
+    acc_original_no_mimo = dict(
+        df.group_by('Alignment Type')
+        .agg(pl.col('Accuracy Original No Mimo').mean())
+        .rows()
+    )
+
     ax = sns.lineplot(
-        df.filter(filter).drop('SIM Training Loss'),
+        df.drop('SIM Training Loss'),
         x='SIM Layers',
         y='Accuracy SIM Mimo',
         hue='Intermediate Layers Atoms',
@@ -49,6 +53,25 @@ def accuracy_vs_simlayers(
         markers=True,
         dashes=True,
     )
+
+    line1 = plt.axhline(
+        y=original_acc, color='gray', linestyle='-', label='No Mismatch'
+    )
+
+    line2 = plt.axhline(
+        y=acc_original_no_mimo['Linear'],
+        color='gray',
+        linestyle='-.',
+        label='Original Linear',
+    )
+
+    line3 = plt.axhline(
+        y=acc_original_no_mimo['PPFE'],
+        color='gray',
+        linestyle=':',
+        label='Original PPFE',
+    )
+
     # Get all handles and labels
     handles, labels = ax.get_legend_handles_labels()
 
@@ -78,30 +101,35 @@ def accuracy_vs_simlayers(
         title='Alignment Type',
         ncol=2,
         loc='upper center',
-        # bbox_to_anchor=(0.7, 1.18),
         bbox_to_anchor=(0.37, 0.18),
         frameon=True,
         framealpha=1,
     )
 
-    ax.legend(
+    legend2 = ax.legend(
         layer_handles,
         layer_labels,
         title='Intermediate Layers Atoms',
         ncol=4,
         loc='upper center',
-        # bbox_to_anchor=(0.3, 1.18),
         bbox_to_anchor=(0.76, 0.18),
         frameon=True,
         framealpha=1,
     )
 
     ax.add_artist(legend1)
+    ax.add_artist(legend2)
 
-    plt.axhline(
-        y=original_acc, color='gray', linestyle=':', label='No Mismatch'
+    ax.legend(
+        handles=[line1, line2, line3],
+        title='',
+        loc='upper center',
+        bbox_to_anchor=(0.5, 1.12),
+        ncol=3,
+        frameon=True,
+        framealpha=1,
+        borderpad=0.5,
     )
-    plt.text(1.5, original_acc - 0.05, 'No Mismatch', color='gray')
 
     plt.xlabel(r'SIM Layers $L$')
     plt.ylabel('Accuracy')
@@ -123,6 +151,138 @@ def accuracy_vs_simlayers(
     return None
 
 
+def accuracy_vs_thickness(
+    df: pl.DataFrame, dataset: str, img_path: Path
+) -> None:
+    """ """
+    filter = (pl.col('Simulation') == 'accuracyVSthickness') & (
+        pl.col('Dataset') == dataset
+    )
+
+    df = df.filter(filter)
+
+    ticks = df['Thickness Multiplier'].unique().to_list()
+
+    original_acc = (
+        df.select('Accuracy No Mismatch')
+        .unique('Accuracy No Mismatch')
+        .mean()
+        .item()
+    )
+    acc_original_no_mimo = dict(
+        df.group_by('Alignment Type')
+        .agg(pl.col('Accuracy Original No Mimo').mean())
+        .rows()
+    )
+
+    ax = sns.lineplot(
+        df.drop('SIM Training Loss'),
+        x='Thickness Multiplier',
+        y='Accuracy SIM Mimo',
+        hue='Intermediate Layers Atoms',
+        style='Alignment Type',
+        markers=True,
+        dashes=True,
+    )
+
+    line1 = plt.axhline(
+        y=original_acc, color='gray', linestyle='-', label='No Mismatch'
+    )
+
+    line2 = plt.axhline(
+        y=acc_original_no_mimo['Linear'],
+        color='gray',
+        linestyle='-.',
+        label='Original Linear',
+    )
+
+    line3 = plt.axhline(
+        y=acc_original_no_mimo['PPFE'],
+        color='gray',
+        linestyle=':',
+        label='Original PPFE',
+    )
+
+    # Get all handles and labels
+    handles, labels = ax.get_legend_handles_labels()
+
+    layer_labels = (
+        df.filter(filter)['Intermediate Layers Atoms']
+        .sort(descending=True)
+        .unique()
+        .to_list()
+    )
+
+    alignment_labels = (
+        df.filter(filter)['Alignment Type']
+        .sort(descending=True)
+        .unique()
+        .to_list()
+    )
+
+    layer_labels = sorted(layer_labels)
+    alignment_labels = sorted(alignment_labels)
+
+    layer_handles = [handles[labels.index(cl)] for cl in layer_labels]
+    alignment_handles = [handles[labels.index(cl)] for cl in alignment_labels]
+
+    legend1 = ax.legend(
+        alignment_handles,
+        alignment_labels,
+        title='Alignment Type',
+        ncol=2,
+        loc='upper center',
+        # bbox_to_anchor=(0.37, 0.18),
+        bbox_to_anchor=(0.63, 0.18),
+        frameon=True,
+        framealpha=1,
+    )
+
+    legend2 = ax.legend(
+        layer_handles,
+        layer_labels,
+        title='Intermediate Layers Atoms',
+        ncol=4,
+        loc='upper center',
+        bbox_to_anchor=(0.24, 0.18),
+        frameon=True,
+        framealpha=1,
+    )
+
+    ax.add_artist(legend1)
+    ax.add_artist(legend2)
+
+    ax.legend(
+        handles=[line1, line2, line3],
+        title='',
+        loc='upper center',
+        bbox_to_anchor=(0.5, 1.12),
+        ncol=3,
+        frameon=True,
+        framealpha=1,
+        borderpad=0.5,
+    )
+
+    plt.xlabel('Thickness Multiplier')
+    plt.ylabel('Accuracy')
+    plt.xticks(ticks, labels=ticks)
+    plt.xlim(min(ticks), max(ticks))
+    plt.ylim(None, 1.0)
+    plt.savefig(
+        str(img_path / f'AccuracyVsThickness_{dataset}.pdf'),
+        format='pdf',
+        bbox_inches='tight',
+    )
+    plt.savefig(
+        str(img_path / f'AccuracyVsThickness_{dataset}.png'),
+        bbox_inches='tight',
+    )
+    plt.clf()
+    plt.cla()
+
+    return None
+
+
 def accuracy_vs_snr(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
     """ """
     filter = (
@@ -130,20 +290,34 @@ def accuracy_vs_snr(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
         &
         # (pl.col('Weighted').is_null()) &
         (pl.col('Dataset') == dataset)
+        & (pl.col('SNR [dB]') < 30.0)
+        & (pl.col('Thickness Multiplier') == 10)
     )
 
-    ticks = df.filter(filter)['SNR [dB]'].unique().to_list()
+    df = df.filter(filter)
+
+    ticks = df['SNR [dB]'].unique().to_list()
 
     original_acc = (
-        df.filter(filter)
-        .select('Accuracy No Mismatch')
+        df.select('Accuracy No Mismatch')
         .unique('Accuracy No Mismatch')
         .mean()
         .item()
     )
 
+    original_acc_no_mimo = (
+        df.select('Accuracy Original No Mimo')
+        .unique('Accuracy Original No Mimo')
+        .mean()
+        .item()
+    )
+
+    alignment_type = (
+        df.select('Alignment Type').unique('Alignment Type').item()
+    )
+
     ax = sns.lineplot(
-        df.filter(filter).drop('SIM Training Loss'),
+        df.drop('SIM Training Loss'),
         x='SNR [dB]',
         y='Accuracy SIM Mimo',
         hue='Intermediate Layers Atoms',
@@ -151,22 +325,26 @@ def accuracy_vs_snr(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
         markers=True,
         dashes=True,
     )
+
+    line1 = plt.axhline(
+        y=original_acc, color='gray', linestyle='-', label='No Mismatch'
+    )
+
+    line2 = plt.axhline(
+        y=original_acc_no_mimo,
+        color='gray',
+        linestyle=':',
+        label='Original ' + alignment_type,
+    )
+
     # Get all handles and labels
     handles, labels = ax.get_legend_handles_labels()
 
     layer_labels = (
-        df.filter(filter)['Intermediate Layers Atoms']
-        # .sort(descending=True)
-        .unique()
-        .to_list()
+        df.filter(filter)['Intermediate Layers Atoms'].unique().to_list()
     )
 
-    num_layers_labels = (
-        df.filter(filter)['SIM Layers']
-        # .sort(descending=True)
-        .unique()
-        .to_list()
-    )
+    num_layers_labels = df.filter(filter)['SIM Layers'].unique().to_list()
 
     layer_labels = sorted(layer_labels)
     num_layers_labels = sorted(num_layers_labels)
@@ -182,31 +360,40 @@ def accuracy_vs_snr(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
         title=r'SIM Layers $L$',
         ncol=2,
         loc='upper center',
-        # bbox_to_anchor=(0.7, 1.18),
-        # bbox_to_anchor=(0.84, 0.62),
-        bbox_to_anchor=(0.37, 0.18),
+        bbox_to_anchor=(0.57, 0.18),
         frameon=True,
         framealpha=1,
     )
 
-    ax.legend(
+    legend2 = ax.legend(
         layer_handles,
         layer_labels,
         title='Intermediate Layers Atoms',
         ncol=4,
         loc='upper center',
-        # bbox_to_anchor=(0.3, 1.18),
-        bbox_to_anchor=(0.76, 0.18),
+        bbox_to_anchor=(0.84, 0.18),
         frameon=True,
         framealpha=1,
     )
 
     ax.add_artist(legend1)
+    ax.add_artist(legend2)
 
-    plt.axhline(
-        y=original_acc, color='gray', linestyle=':', label='No Mismatch'
+    ax.legend(
+        handles=[line1, line2],
+        title='',
+        # loc='upper left',
+        # bbox_to_anchor=(0, 1.01),
+        loc='upper center',
+        bbox_to_anchor=(0.5, 1.12),
+        # bbox_to_anchor=(0.37, 0.28),
+        # loc='upper center',
+        # bbox_to_anchor=(0.37, 0.18),
+        ncol=2,
+        frameon=True,
+        framealpha=1,
+        borderpad=0.5,
     )
-    plt.text(-25.0, original_acc - 0.05, 'No Mismatch', color='gray')
 
     plt.xlabel('Signal to Noise Ratio [dB]')
     plt.ylabel('Accuracy')
@@ -228,9 +415,7 @@ def accuracy_vs_snr(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
     return None
 
 
-def accuracy_original_vs_simlayers(
-    df: pl.DataFrame, dataset: str, img_path: Path
-) -> None:
+def accuracy_original(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
     """ """
     filter = (
         (pl.col('Simulation') == 'accuracyVSsimlayers')
@@ -238,8 +423,6 @@ def accuracy_original_vs_simlayers(
         # (pl.col('Weighted').is_null()) &
         (pl.col('Dataset') == dataset)
     )
-
-    # ticks = df.filter(filter)['SIM Layers'].unique().to_list()
 
     df = df.filter(filter).select(
         pl.col(
@@ -253,46 +436,19 @@ def accuracy_original_vs_simlayers(
         y='Alignment Type',
         x='Accuracy Original Mimo',
         hue='Alignment Type',
-        order=['Linear', 'Linear Precision', 'PPFE', 'Linear Entropy'],
-        # markers=True,
-        # dashes=True,
+        order=['Linear', 'Procrustes', 'PPFE'],
     )
-    # Get all handles and labels
-    # handles, labels = ax.get_legend_handles_labels()
-
-    # alignment_labels = (
-    #     df['Alignment Type']
-    #     .sort(descending=True)
-    #     .unique()
-    #     .to_list()
-    # )
-
-    # alignment_handles = [handles[labels.index(cl)] for cl in alignment_labels]
-
-    # legend1 = ax.legend(
-    #     alignment_handles,
-    #     alignment_labels,
-    #     title='Alignment Type',
-    #     ncol=2,
-    #     loc='upper center',
-    #     bbox_to_anchor=(0.7, 1.18),
-    #     frameon=True,
-    #     framealpha=1,
-    # )
-
-    # ax.add_artist(legend1)
 
     plt.ylabel('')
     plt.xlabel('Accuracy')
-    # plt.xticks(ticks, labels=ticks)
     plt.xlim(0.8, 1.0)
     plt.savefig(
-        str(img_path / f'AccuracyOriginalVsSIMLayers_{dataset}.pdf'),
+        str(img_path / f'AccuracyOriginal_{dataset}.pdf'),
         format='pdf',
         bbox_inches='tight',
     )
     plt.savefig(
-        str(img_path / f'AccuracyOriginalVsSIMLayers_{dataset}.png'),
+        str(img_path / f'AccuracyOriginal_{dataset}.png'),
         bbox_inches='tight',
     )
     plt.clf()
@@ -305,11 +461,8 @@ def taskfidelity_vs_simlayers(
     df: pl.DataFrame, dataset: str, img_path: Path
 ) -> None:
     """ """
-    filter = (
-        (pl.col('Simulation') == 'accuracyVSsimlayers')
-        &
-        # (pl.col('Weighted').is_null()) &
-        (pl.col('Dataset') == dataset)
+    filter = (pl.col('Simulation') == 'accuracyVSsimlayers') & (
+        pl.col('Dataset') == dataset
     )
 
     df = df.filter(filter).with_columns(
@@ -391,11 +544,8 @@ def taskfidelity_vs_simlayers(
 
 def mse_vs_simlayers(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
     """"""
-    filter = (
-        (pl.col('Simulation') == 'accuracyVSsimlayers')
-        &
-        # (pl.col('Weighted').is_null()) &
-        (pl.col('Dataset') == dataset)
+    filter = (pl.col('Simulation') == 'accuracyVSsimlayers') & (
+        pl.col('Dataset') == dataset
     )
 
     ticks = df.filter(filter)['SIM Layers'].unique().to_list()
@@ -429,11 +579,8 @@ def mse_vs_simlayers(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
 
 def sim_training_loss(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
     """"""
-    filter = (
-        (pl.col('Simulation') == 'accuracyVSsimlayers')
-        &
-        # (pl.col('Weighted').is_null()) &
-        (pl.col('Dataset') == dataset)
+    filter = (pl.col('Simulation') == 'accuracyVSsimlayers') & (
+        pl.col('Dataset') == dataset
     )
 
     df_plot = (
@@ -481,18 +628,68 @@ def sim_training_loss(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
     return None
 
 
+def sim_training_loss_2(
+    df: pl.DataFrame, dataset: str, img_path: Path
+) -> None:
+    """"""
+    filter = (
+        (pl.col('Simulation') == 'accuracyVSsimlayers')
+        & (pl.col('Dataset') == dataset)
+        & (pl.col('Intermediate Layers Atoms') == '64x64')
+    )
+
+    df_plot = (
+        df.filter(filter)
+        .select(
+            pl.col(
+                'SIM Layers',
+                'SIM Training Loss',
+                'Intermediate Layers Atoms',
+                'Weighted',
+                'Iterations',
+                'Alignment Type',
+            )
+        )
+        .with_columns(
+            pl.int_ranges(1, pl.col('Iterations') + 1).alias('Iterations')
+        )
+        .explode('SIM Training Loss', 'Iterations')
+    )
+
+    g = sns.relplot(
+        df_plot.to_pandas(),
+        x='Iterations',
+        y='SIM Training Loss',
+        hue='SIM Layers',
+        col='Alignment Type',
+        kind='line',
+        markers=True,
+        dashes=False,
+    ).set(xlabel='')
+    g.set_titles('{col_name}')
+    plt.savefig(
+        str(img_path / f'TrainingLoss_only64x64_{dataset}.pdf'),
+        format='pdf',
+        bbox_inches='tight',
+    )
+    plt.savefig(
+        str(img_path / f'TrainingLoss_only64x64_{dataset}.png'),
+        bbox_inches='tight',
+    )
+    plt.clf()
+    plt.cla()
+    return None
+
+
 def accuracy_vs_lambda(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
     """"""
     filter = (
         (pl.col('Simulation') == 'accuracyVSlambda')
         & (pl.col('Weighted').is_null())
-        &
-        # (pl.col('Lambda') > 0) &
-        (pl.col('Dataset') == dataset)
+        & (pl.col('Dataset') == dataset)
         & (pl.col('Alignment Type') == 'Linear')
     )
 
-    # ticks = df.filter(filter)['Lambda'].round(3).unique().to_list()
     ticks = [0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0]
 
     sns.lineplot(
@@ -503,7 +700,6 @@ def accuracy_vs_lambda(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
         markers=True,
         dashes=False,
     ).set(xscale='log')
-    # g.set_titles('{col_name} | Weighted {row_name}')
     plt.xticks(ticks, labels=ticks)
     plt.xlim(min(ticks), max(ticks))
     plt.ylabel('Accuracy')
@@ -522,6 +718,59 @@ def accuracy_vs_lambda(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
     return None
 
 
+def accuracy_vs_ppfe(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
+    """ """
+    filter = (pl.col('Simulation') == 'ppfe') & (pl.col('Dataset') == dataset)
+
+    ticks = df.filter(filter)['Number Clusters'].unique().to_list()
+
+    df = (
+        df.drop('SIM Training Loss')
+        .filter(filter)
+        .rename(
+            {
+                'Accuracy SIM Mimo': 'SIM',
+                'Accuracy Original Mimo': 'Original',
+            }
+        )
+        .unpivot(
+            on=['SIM', 'Original'],
+            index=['Number Clusters', 'Number Proto'],
+            variable_name='Type',
+            value_name='Accuracy',
+        )
+    )
+
+    sns.lineplot(
+        df,
+        x='Number Clusters',
+        y='Accuracy',
+        hue='Type',
+        style='Number Proto',
+        markers=True,
+        dashes=True,
+    ).set(xscale='log')
+
+    plt.xlabel('Proto Anchors')
+    plt.ylabel('Accuracy')
+    plt.xticks(ticks, labels=ticks)
+    plt.xlim(min(ticks), max(ticks))
+    plt.ylim(None, 1.0)
+    plt.savefig(
+        str(img_path / f'AccuracyVsPPFE_{dataset}.pdf'),
+        format='pdf',
+        bbox_inches='tight',
+    )
+    plt.savefig(
+        str(img_path / f'AccuracyVsPPFE_{dataset}.png'),
+        bbox_inches='tight',
+    )
+    plt.clf()
+    plt.cla()
+
+    return None
+
+
 # =============================================================
 #
 #                     THE MAIN LOOP
@@ -534,7 +783,7 @@ def main() -> None:
     # Defining some usefull paths
     CURRENT: Path = Path('.')
     RESULTS_PATH: Path = CURRENT / 'results/'
-    IMG_PATH: Path = CURRENT / 'img'
+    IMG_PATH: Path = CURRENT / 'img/classification'
 
     # Create image Path
     IMG_PATH.mkdir(exist_ok=True)
@@ -549,7 +798,7 @@ def main() -> None:
 
     # Retrieve Data
     df: pl.DataFrame = (
-        pl.read_parquet(RESULTS_PATH / 'linear/*.parquet')
+        pl.read_parquet(RESULTS_PATH / 'classification/*.parquet')
         .with_columns(
             (
                 (pl.col('SIM Meta Atoms Intermediate X')).cast(pl.String)
@@ -568,6 +817,15 @@ def main() -> None:
             ['SIM Meta Atoms Intermediate X', 'Alignment Type'],
             descending=False,
         )
+        .with_columns(
+            (
+                pl.col('SIM Thickness')
+                / (pl.col('SIM Layers') * pl.col('SIM Wavelength'))
+            )
+            .round()
+            .cast(pl.UInt16)
+            .alias('Thickness Multiplier')
+        )
     )
 
     # ===================================================================================
@@ -583,12 +841,22 @@ def main() -> None:
     # ===================================================================================
     #                          Accuracy Original Vs SIM Layers
     # ===================================================================================
-    accuracy_original_vs_simlayers(df, dataset, IMG_PATH)
+    # accuracy_original(df, dataset, IMG_PATH)
 
     # ===================================================================================
     #                          Task Fidelity Vs SIM Layers
     # ===================================================================================
-    taskfidelity_vs_simlayers(df, dataset, IMG_PATH)
+    # taskfidelity_vs_simlayers(df, dataset, IMG_PATH)
+
+    # ===================================================================================
+    #                          Accuracy Vs PPFE Clusters
+    # ===================================================================================
+    accuracy_vs_ppfe(df, dataset, IMG_PATH)
+
+    # ===================================================================================
+    #                          Accuracy Vs Thickness
+    # ===================================================================================
+    accuracy_vs_thickness(df, dataset, IMG_PATH)
 
     # ===================================================================================
     #                          MSE Loss Vs SIM Layers
@@ -604,6 +872,7 @@ def main() -> None:
     #                          SIM Training Loss Vs SIM Layers
     # ===================================================================================
     # sim_training_loss(df, dataset, IMG_PATH)
+    # sim_training_loss_2(df, dataset, IMG_PATH)
 
     return None
 

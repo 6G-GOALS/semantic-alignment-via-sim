@@ -1,6 +1,6 @@
 """In this python module we define class that handles the dataset:
-- DatasetAlignment: a custom Pytorch Dataset for encoding from an absolute representation to a relative one.
-- DataModuleAlignment: a Pytorch Lightning Data Module for the Relative Encoder.
+- DatasetAlignmentClassification: a custom Pytorch Dataset for encoding from an absolute representation to a relative one.
+- DataModuleAlignmentClassification: a Pytorch Lightning Data Module for the Relative Encoder.
 """
 
 import torch
@@ -25,7 +25,7 @@ else:
 #                 DATASETS DEFINITION
 #
 # =====================================================
-class DatasetAlignment(Dataset):
+class DatasetAlignmentClassification(Dataset):
     """A custom implementation of a Pytorch Dataset.
 
     Args:
@@ -123,7 +123,7 @@ class DatasetAlignment(Dataset):
 #                DATAMODULES DEFINITION
 #
 # =====================================================
-class DataModuleAlignment(LightningDataModule):
+class DataModuleAlignmentClassification(LightningDataModule):
     """A custom Lightning Data Module to handle a Pytorch Dataset.
 
     Args:
@@ -133,8 +133,6 @@ class DataModuleAlignment(LightningDataModule):
             The name of the encoder transmitter side.
         rx_enc : str
             The name of the encoder transmitter side.
-        task : str
-            The task to perform.
         train_label_size : int
             The size of training dataset to use for each label. Default 4200.
         method : str
@@ -158,7 +156,6 @@ class DataModuleAlignment(LightningDataModule):
         dataset: str,
         tx_enc: str,
         rx_enc: str,
-        task: str,
         train_label_size: int = 4200,
         method: str = 'centroid',
         grouping: str = 'label',
@@ -171,7 +168,6 @@ class DataModuleAlignment(LightningDataModule):
         self.dataset: str = dataset
         self.tx_enc: str = tx_enc
         self.rx_enc: str = rx_enc
-        self.task: str = task
         self.train_label_size: int = train_label_size
         self.method: str = method
         self.grouping: str = grouping
@@ -216,12 +212,12 @@ class DataModuleAlignment(LightningDataModule):
             None.
         """
         CURRENT = Path('.')
-        GENERAL_PATH: Path = CURRENT / f'data/{self.task}' / self.dataset
+        GENERAL_PATH: Path = CURRENT / 'data/classification' / self.dataset
 
         # ================================================================
         #                         Train Data
         # ================================================================
-        self.train_data = DatasetAlignment(
+        self.train_data = DatasetAlignmentClassification(
             tx_path=GENERAL_PATH / 'train' / f'{self.tx_enc}.pt',
             rx_path=GENERAL_PATH / 'train' / f'{self.rx_enc}.pt',
         )
@@ -284,7 +280,7 @@ class DataModuleAlignment(LightningDataModule):
         # ================================================================
         #                         Test Data
         # ================================================================
-        self.test_data = DatasetAlignment(
+        self.test_data = DatasetAlignmentClassification(
             tx_path=GENERAL_PATH / 'test' / f'{self.tx_enc}.pt',
             rx_path=GENERAL_PATH / 'test' / f'{self.rx_enc}.pt',
         )
@@ -292,7 +288,7 @@ class DataModuleAlignment(LightningDataModule):
         # ================================================================
         #                         Val Data
         # ================================================================
-        self.val_data = DatasetAlignment(
+        self.val_data = DatasetAlignmentClassification(
             tx_path=GENERAL_PATH / 'val' / f'{self.tx_enc}.pt',
             rx_path=GENERAL_PATH / 'val' / f'{self.rx_enc}.pt',
         )
@@ -375,18 +371,16 @@ def main() -> None:
 
     # Setting inputs
     dataset = 'cifar10'
-    tx_enc = 'vit_small_patch16_224'
-    rx_enc = 'vit_base_patch16_224'
-    task = 'classification'
-    train_label_size = 1000
-    method = 'centroid'
 
     print('Running first test...', end='\t')
-    data = DataModuleAlignment(
+    tx_enc = 'vit_small_patch16_224'
+    rx_enc = 'vit_base_patch16_224'
+    train_label_size = 1000
+    method = 'centroid'
+    data = DataModuleAlignmentClassification(
         dataset=dataset,
         tx_enc=tx_enc,
         rx_enc=rx_enc,
-        task=task,
         train_label_size=train_label_size,
         method=method,
     )

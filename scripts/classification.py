@@ -17,7 +17,7 @@ from torch.utils.data import TensorDataset, DataLoader
 
 from src.sim import SIMoptimizerTorch
 from src.models_tasks.classification import Classifier
-from src.datamodules.alignment import DataModuleAlignment
+from src.datamodules.alignment import DataModuleAlignmentClassification
 from src.alignment_utils import (
     ppfe,
     ridge_regression,
@@ -42,7 +42,7 @@ from src.utils import (
 
 @hydra.main(
     config_path='../.conf/hydra/sim',
-    config_name='settings',
+    config_name='classification',
     version_base='1.3',
 )
 def main(cfg: DictConfig) -> None:
@@ -51,7 +51,7 @@ def main(cfg: DictConfig) -> None:
     # Define some usefull paths
     CURRENT: Path = Path('.')
     MODEL_PATH: Path = CURRENT / 'models'
-    RESULTS_PATH: Path = CURRENT / 'results/linear'
+    RESULTS_PATH: Path = CURRENT / 'results/classification'
 
     # Create directories
     RESULTS_PATH.mkdir(exist_ok=True, parents=True)
@@ -79,16 +79,17 @@ def main(cfg: DictConfig) -> None:
     # ===========================================================
     #                 Datamodule Initialization
     # ===========================================================
-    datamodule: DataModuleAlignment = DataModuleAlignment(
-        dataset=cfg.datamodule.dataset,
-        tx_enc=cfg.models.transmitter,
-        rx_enc=cfg.models.receiver,
-        task='classification',
-        train_label_size=cfg.datamodule.train_label_size,
-        method=cfg.datamodule.method,
-        grouping=cfg.datamodule.grouping,
-        batch_size=cfg.datamodule.batch_size,
-        seed=cfg.seed,
+    datamodule: DataModuleAlignmentClassification = (
+        DataModuleAlignmentClassification(
+            dataset=cfg.datamodule.dataset,
+            tx_enc=cfg.models.transmitter,
+            rx_enc=cfg.models.receiver,
+            train_label_size=cfg.datamodule.train_label_size,
+            method=cfg.datamodule.method,
+            grouping=cfg.datamodule.grouping,
+            batch_size=cfg.datamodule.batch_size,
+            seed=cfg.seed,
+        )
     )
 
     # Prepare and setup the data
@@ -101,7 +102,7 @@ def main(cfg: DictConfig) -> None:
     # Setting the seed
     seed_everything(cfg.seed, workers=True)
 
-    n, m = datamodule.test_data.z_rx.shape
+    _, m = datamodule.test_data.z_rx.shape
     m = int(m // 2)
 
     # Initializating a wireless mimo channel

@@ -52,7 +52,7 @@ def find_and_rename_ckpt_files(
 def download_classifier(
     org: str,
     project: str,
-    rx_enc: str,
+    model_name: str,
     dataset: str,
     seed: int,
     session,
@@ -63,7 +63,7 @@ def download_classifier(
             The name of the wandb organization.
         project : str
             The project name.
-        rx_enc : str
+        model_name : str
             The receiver encoder name.
         dataset : str
             The dataset name.
@@ -76,12 +76,12 @@ def download_classifier(
         None
     """
     session.use_artifact(
-        f'{org}/{project}/model-{rx_enc}_{seed}_{dataset}:best',
+        f'{org}/{project}/model-{model_name}_{seed}_{dataset}:best',
         type='model',
     ).download()
     find_and_rename_ckpt_files(
         original_path='artifacts',
-        new_path=f'models/classifiers/{dataset}/{rx_enc}/',
+        new_path=f'models/classifiers/{dataset}/{model_name}/',
         name=f'seed_{seed}',
     )
     return None
@@ -120,28 +120,28 @@ def main() -> None:
     # Init wandb
     run = wandb.init()
 
-    # Define needed variables
-    project = 'semantic_alignment_mimo__classifier'
-    datasets = ['cifar100']
-    seeds = [27, 42, 100, 123, 144, 200]
-    rx_encs = [
-        # 'vit_small_patch16_224',
-        'vit_base_patch16_224',
-    ]
+    match args.type:
+        case 'classifier':
+            # Define needed variables
+            project = 'semantic_alignment_mimo__classifier'
+            datasets = ['cifar10']
+            seeds = [27, 42, 100, 123, 144, 200]
+            models = [
+                'vit_base_patch16_224',
+            ]
 
-    # Donwload Classifiers
-    for dataset in datasets:
-        for rx_enc in rx_encs:
-            for seed in seeds:
-                download_classifier(
-                    org=args.org,
-                    project=project,
-                    rx_enc=rx_enc,
-                    dataset=dataset,
-                    seed=seed,
-                    session=run,
-                )
-
+            # Donwload Classifiers
+            for dataset in datasets:
+                for model_name in models:
+                    for seed in seeds:
+                        download_classifier(
+                            org=args.org,
+                            project=project,
+                            model_name=model_name,
+                            dataset=dataset,
+                            seed=seed,
+                            session=run,
+                        )
     # Close wandb
     wandb.finish()
 

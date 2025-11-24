@@ -149,7 +149,7 @@ class DataModuleClassifier(LightningDataModule):
         ID = dotenv_values()['DATA_ID']
 
         # Download and unzip the data
-        download_zip_from_gdrive(ID, name='latents', path='data')
+        download_zip_from_gdrive(ID, name='data', path='data')
 
         return None
 

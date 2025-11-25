@@ -66,7 +66,7 @@ def main(cfg: DictConfig) -> None:
     alignment_type: str = cfg.alignment.type
     n_proto: int = int(cfg.alignment.n_proto)
     n_clusters: int = int(cfg.alignment.n_clusters)
-    uuid: str = f'{cfg.seed}_{cfg.datamodule.dataset}_{cfg.alignment.type}_{cfg.channel.snr_db}_{n_proto}_{cfg.sim.layers}_{cfg.sim.wavelength}_{cfg.alignment.lmb}_{cfg.alignment.n_clusters}_{cfg.alignment.weighted}_{cfg.sim.thickness}_{cfg.sim.meta_atoms_intermediate_x}_{cfg.sim.meta_atoms_intermediate_y}_{cfg.sim.meta_atom_spacing_input_x}_{cfg.sim.meta_atom_spacing_input_y}_{cfg.sim.meta_atom_spacing_output_x}_{cfg.sim.meta_atom_spacing_output_y}_{cfg.sim.meta_atom_spacing_intermediate_x}_{cfg.sim.meta_atom_spacing_intermediate_y}_{cfg.datamodule.train_label_size}_{cfg.datamodule.grouping}_{cfg.datamodule.method}_{cfg.simulation}'
+    uuid: str = f'{cfg.seed}_{cfg.datamodule.dataset}_{cfg.alignment.type}_{cfg.channel.snr_db}_{n_proto}_{cfg.sim.layers}_{cfg.sim.wavelength}_{cfg.alignment.lmb}_{cfg.alignment.n_clusters}_{cfg.alignment.weighted}_{cfg.sim.thickness_multiplier}_{cfg.sim.thickness}_{cfg.sim.meta_atoms_intermediate_x}_{cfg.sim.meta_atoms_intermediate_y}_{cfg.sim.spacing_divisor_input}_{cfg.sim.spacing_divisor_output}_{cfg.sim.spacing_divisor_intermediate}_{cfg.sim.meta_atom_spacing_input_x}_{cfg.sim.meta_atom_spacing_input_y}_{cfg.sim.meta_atom_spacing_output_x}_{cfg.sim.meta_atom_spacing_output_y}_{cfg.sim.meta_atom_spacing_intermediate_x}_{cfg.sim.meta_atom_spacing_intermediate_y}_{cfg.datamodule.train_label_size}_{cfg.datamodule.grouping}_{cfg.datamodule.method}_{cfg.simulation}'
 
     # Define some variables
     trainer: Trainer = Trainer(

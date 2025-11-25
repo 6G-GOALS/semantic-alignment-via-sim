@@ -69,7 +69,7 @@ uv run scripts/classification.py -m sim.layers=10,25 sim.meta_atoms_intermediate
 python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=16 sim.meta_atoms_intermediate_y=16 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 simulation=accuracyVSthickness
 # Amplification only in the input layer
 python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=16 sim.meta_atoms_intermediate_y=16 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 simulation=accuracyVSthickness
-# Amplification in input & output layers
+# Amplification in input & intermediate layers
 python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=16 sim.meta_atoms_intermediate_y=16 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 sim.spacing_divisor_intermediate=1 simulation=accuracyVSthickness
 # Amplification in all layers
 python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=16 sim.meta_atoms_intermediate_y=16 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 sim.spacing_divisor_intermediate=1 sim.spacing_divisor_output=1 simulation=accuracyVSthickness
@@ -81,7 +81,7 @@ python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=
 python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=32 sim.meta_atoms_intermediate_y=32 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 simulation=accuracyVSthickness
 # Amplification only in the input layer
 python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=32 sim.meta_atoms_intermediate_y=32 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 simulation=accuracyVSthickness
-# Amplification in input & output layers
+# Amplification in input & intermediate layers
 python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=32 sim.meta_atoms_intermediate_y=32 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 sim.spacing_divisor_intermediate=1 simulation=accuracyVSthickness
 # Amplification in all layers
 python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=32 sim.meta_atoms_intermediate_y=32 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 sim.spacing_divisor_intermediate=1 sim.spacing_divisor_output=1 simulation=accuracyVSthickness
@@ -93,7 +93,7 @@ python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=
 python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=64 sim.meta_atoms_intermediate_y=64 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 simulation=accuracyVSthickness
 # Amplification only in the input layer
 python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=64 sim.meta_atoms_intermediate_y=64 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 simulation=accuracyVSthickness
-# Amplification in input & output layers
+# Amplification in input & intermediate layers
 python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=64 sim.meta_atoms_intermediate_y=64 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 sim.spacing_divisor_intermediate=1 simulation=accuracyVSthickness
 # Amplification in all layers
 python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=64 sim.meta_atoms_intermediate_y=64 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 sim.spacing_divisor_intermediate=1 sim.spacing_divisor_output=1 simulation=accuracyVSthickness
@@ -107,7 +107,7 @@ python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=
 uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=16 sim.meta_atoms_intermediate_y=16 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 simulation=accuracyVSthickness
 # Amplification only in the input layer
 uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=16 sim.meta_atoms_intermediate_y=16 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 simulation=accuracyVSthickness
-# Amplification in input & output layers
+# Amplification in input & intermediate layers
 uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=16 sim.meta_atoms_intermediate_y=16 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 sim.spacing_divisor_intermediate=1 simulation=accuracyVSthickness
 # Amplification in all layers
 uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=16 sim.meta_atoms_intermediate_y=16 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 sim.spacing_divisor_intermediate=1 sim.spacing_divisor_output=1 simulation=accuracyVSthickness
@@ -119,7 +119,7 @@ uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=
 uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=32 sim.meta_atoms_intermediate_y=32 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 simulation=accuracyVSthickness
 # Amplification only in the input layer
 uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=32 sim.meta_atoms_intermediate_y=32 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 simulation=accuracyVSthickness
-# Amplification in input & output layers
+# Amplification in input & intermediate layers
 uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=32 sim.meta_atoms_intermediate_y=32 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 sim.spacing_divisor_intermediate=1 simulation=accuracyVSthickness
 # Amplification in all layers
 uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=32 sim.meta_atoms_intermediate_y=32 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 sim.spacing_divisor_intermediate=1 sim.spacing_divisor_output=1 simulation=accuracyVSthickness
@@ -131,7 +131,7 @@ uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=
 uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=64 sim.meta_atoms_intermediate_y=64 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 simulation=accuracyVSthickness
 # Amplification only in the input layer
 uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=64 sim.meta_atoms_intermediate_y=64 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 simulation=accuracyVSthickness
-# Amplification in input & output layers
+# Amplification in input & intermediate layers
 uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=64 sim.meta_atoms_intermediate_y=64 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 sim.spacing_divisor_intermediate=1 simulation=accuracyVSthickness
 # Amplification in all layers
 uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=64 sim.meta_atoms_intermediate_y=64 alignment.type=PPFE sim.thickness_multiplier=4,5,6,7,8,9,10 seed=27,42,100,123,144,200 sim.spacing_divisor_input=1 sim.spacing_divisor_intermediate=1 sim.spacing_divisor_output=1 simulation=accuracyVSthickness

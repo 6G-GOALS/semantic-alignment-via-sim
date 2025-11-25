@@ -8,7 +8,7 @@ simulation: example
 alignment:
   type: 'Linear'
   n_clusters: 24
-  n_proto: 100
+  n_proto: 1000
   lmb: 0
   weighted: null
   
@@ -41,12 +41,15 @@ sim:
   max_iters: 500
   lr: 1e-1
   decay: 0.8
-  meta_atom_spacing_input_x: ${eval:"${sim.wavelength} / 2"}
-  meta_atom_spacing_input_y: ${eval:"${sim.wavelength} / 2"}
-  meta_atom_spacing_output_x: ${eval:"${sim.wavelength} / 2"}
-  meta_atom_spacing_output_y: ${eval:"${sim.wavelength} / 2"}
-  meta_atom_spacing_intermediate_x: ${eval:"${sim.wavelength} / 2"}
-  meta_atom_spacing_intermediate_y: ${eval:"${sim.wavelength} / 2"}
+  spacing_divisor_input: 2
+  spacing_divisor_output: 2
+  spacing_divisor_intermediate: 2
+  meta_atom_spacing_input_x: ${eval:"${sim.wavelength} / ${sim.spacing_divisor_input}"}
+  meta_atom_spacing_input_y: ${eval:"${sim.wavelength} / ${sim.spacing_divisor_input}"}
+  meta_atom_spacing_output_x: ${eval:"${sim.wavelength} / ${sim.spacing_divisor_output}"}
+  meta_atom_spacing_output_y: ${eval:"${sim.wavelength} / ${sim.spacing_divisor_output}"}
+  meta_atom_spacing_intermediate_x: ${eval:"${sim.wavelength} / ${sim.spacing_divisor_intermediate}"}
+  meta_atom_spacing_intermediate_y: ${eval:"${sim.wavelength} / ${sim.spacing_divisor_intermediate}"}
   
 wandb:
   project: semantic_alignment_via_sim

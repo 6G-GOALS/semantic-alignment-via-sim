@@ -24,7 +24,6 @@ def accuracy_vs_simlayers(
         (pl.col('Simulation') == 'accuracyVSsimlayers')
         & (pl.col('Alignment Type').is_in({'PPFE', 'Linear'}))
         & (pl.col('Dataset') == dataset)
-        & (pl.col('Thickness Multiplier') == 10)
     )
 
     df = df.filter(filter)

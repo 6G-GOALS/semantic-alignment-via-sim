@@ -3,8 +3,8 @@
 <h5 align="center">
      
  
-[![arXiv](https://img.shields.io/badge/Arxiv-2412.11959-b31b1b.svg?logo=arXiv)](https://arxiv.org/abs/2412.11959)
-[![License](https://img.shields.io/badge/Code%20License-MIT-yellow)](https://github.com/PKU-YuanGroup/LanguageBind/blob/main/LICENSE)
+[![arXiv](https://img.shields.io/badge/Arxiv-1111.11111-b31b1b.svg?logo=arXiv)](https://arxiv.org/abs/1111.11111)
+[![License](https://img.shields.io/badge/Code%20License-MIT-yellow)](https://github.com/SPAICOM/semantic-alignment-via-sim/blob/main/LICENSE)
 
  <br>
 

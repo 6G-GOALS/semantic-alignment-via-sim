@@ -484,6 +484,9 @@ def main(cfg: DictConfig) -> None:
         pl.col('Lambda').cast(pl.Float32),
         pl.col('Weighted').cast(pl.String),
         pl.col('SNR [dB]').cast(pl.Float32),
+        pl.col('SIM Spacing Divisor Input').cast(pl.Float64),
+        pl.col('SIM Spacing Divisor Output').cast(pl.Float64),
+        pl.col('SIM Spacing Divisor Intermediate').cast(pl.Float64),
     ).write_parquet(RESULTS_PATH / f'{uuid}.parquet')
 
     return None

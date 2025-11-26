@@ -41,9 +41,9 @@ sim:
   max_iters: 500
   lr: 1e-1
   decay: 0.8
-  spacing_divisor_input: 2
-  spacing_divisor_output: 2
-  spacing_divisor_intermediate: 2
+  spacing_divisor_input: 2.0
+  spacing_divisor_output: 2.0
+  spacing_divisor_intermediate: 2.0
   meta_atom_spacing_input_x: ${eval:"${sim.wavelength} / ${sim.spacing_divisor_input}"}
   meta_atom_spacing_input_y: ${eval:"${sim.wavelength} / ${sim.spacing_divisor_input}"}
   meta_atom_spacing_output_x: ${eval:"${sim.wavelength} / ${sim.spacing_divisor_output}"}

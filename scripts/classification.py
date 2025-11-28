@@ -240,9 +240,12 @@ def main(cfg: DictConfig) -> None:
         optimized_G, A.cpu().resolve_conj().numpy()
     )
 
-    simA = (
-        torch.from_numpy(beta * optimized_G).to(torch.complex64).to(cfg.device)
-    )
+    beta = torch.from_numpy(beta).to(torch.complex64).to(cfg.device)
+    G = torch.from_numpy(optimized_G).to(torch.complex64).to(cfg.device)
+
+    # simA = (
+    #     torch.from_numpy(beta * optimized_G).to(torch.complex64).to(cfg.device)
+    # )
 
     # ============================================================
     #
@@ -360,8 +363,10 @@ def main(cfg: DictConfig) -> None:
     #                  Alignment with SIM A
     # ============================================================
     # Alignment
-    y_hat = simA @ test_input
-
+    # y_hat = simA @ test_input
+    y_hat = G @ test_input
+    y_hat = beta * y_hat
+    
     # Dewhitening
     y_hat = L_output @ y_hat + mean_output
 
@@ -391,7 +396,8 @@ def main(cfg: DictConfig) -> None:
     #            Alignment with SIM A + MIMO
     # ============================================================
     # Alignment
-    y_hat = simA @ test_input
+    # y_hat = simA @ test_input
+    y_hat = G @ test_input
 
     # Passage through channel
     y_hat = channel @ y_hat
@@ -401,6 +407,9 @@ def main(cfg: DictConfig) -> None:
 
     # Channel equalization
     y_hat = equalizer @ y_hat
+
+    # Appy beta
+    y_hat = beta * y_hat
 
     # Dewhitening
     y_hat = L_output @ y_hat + mean_output

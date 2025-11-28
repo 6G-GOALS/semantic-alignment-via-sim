@@ -407,7 +407,7 @@ def main(cfg: DictConfig) -> None:
         channel_pinv = torch.linalg.pinv(channel)
 
         sigma = torch.sqrt(
-            (torch.trace(G @ (y_hat @ y_hat.H) @ G.H) / n)
+            (torch.trace(y_hat @ y_hat.H) / n)
             / (snr_linear * torch.trace(channel_pinv.H @ channel_pinv))
         ).real.item()
 

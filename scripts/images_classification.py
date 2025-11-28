@@ -210,9 +210,14 @@ def accuracy_vs_thickness(
         )
         .drop_nulls('Amplification')
         .sort('Amplification', descending=True)
+        .with_columns(
+            (pl.col('Thickness Multiplier') * pl.col('SIM Wavelength')).alias(
+                'SIM Layer Distance'
+            )
+        )
     )
 
-    ticks = df['Thickness Multiplier'].unique().to_list()
+    ticks = df['SIM Layer Distance'].unique().to_list()
 
     original_acc = (
         df.select('Accuracy No Mismatch')
@@ -228,7 +233,7 @@ def accuracy_vs_thickness(
 
     ax = sns.lineplot(
         df.drop('SIM Training Loss'),
-        x='Thickness Multiplier',
+        x='SIM Layer Distance',
         y='Accuracy SIM Mimo',
         hue='Intermediate Layers Atoms',
         style='Amplification',
@@ -318,7 +323,7 @@ def accuracy_vs_thickness(
         borderpad=0.5,
     )
 
-    plt.xlabel(r'Thickness Multiplier $\Delta$')
+    plt.xlabel(r'$s_{\mathrm{layer}}$')
     plt.ylabel('Accuracy')
     plt.xticks(ticks, labels=ticks)
     plt.xlim(min(ticks), max(ticks))

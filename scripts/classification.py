@@ -324,8 +324,6 @@ def main(cfg: DictConfig) -> None:
             / (snr_linear * torch.trace(channel_pinv.H @ channel_pinv))
         ).real.item()
 
-        print(sigma)
-
         # Get the AWGN
         w = awgn(sigma, size=y_hat.shape, device=cfg.device)
 
@@ -402,6 +400,20 @@ def main(cfg: DictConfig) -> None:
     # Passage through channel
     y_hat = channel @ y_hat
     if cfg.channel.snr_db is not None:
+        _, n = y_hat.shape
+        
+        snr_linear = math.pow(10, cfg.channel.snr_db / 10)
+
+        channel_pinv = torch.linalg.pinv(channel)
+
+        sigma = torch.sqrt(
+            (torch.trace(G @ (y_hat @ y_hat.H) @ G.H) / n)
+            / (snr_linear * torch.trace(channel_pinv.H @ channel_pinv))
+        ).real.item()
+
+        # Get the AWGN
+        w = awgn(sigma, size=y_hat.shape, device=cfg.device)
+        
         # Add AWGN
         y_hat += w
 

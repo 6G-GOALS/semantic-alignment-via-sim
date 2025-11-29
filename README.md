@@ -45,24 +45,24 @@ uv run scripts/classification.py -m sim.layers=1,2,3,4,5,6,7,8,9,10,15,20,25 ali
 
 ```bash
 # SIM Meta Atoms Intermediate Layers 16x16
-python scripts/classification.py -m sim.layers=5,10 sim.meta_atoms_intermediate_x=16 sim.meta_atoms_intermediate_y=16 channel.snr_db=-30.0,-20.0,-10.0,0.0,10.0,20.0 alignment.type=PPFE seed=27,42,100,123,144,200 simulation=accuracyVSsnr
+python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=16 sim.meta_atoms_intermediate_y=16 channel.snr_db=-30.0,-20.0,-10.0,0.0,10.0,20.0,30.0 alignment.type=PPFE,Linear seed=27,42,100,123,144,200 simulation=accuracyVSsnr
 
 # SIM Meta Atoms Intermediate Layers 32x32
-python scripts/classification.py -m sim.layers=5,10 sim.meta_atoms_intermediate_x=32 sim.meta_atoms_intermediate_y=32 channel.snr_db=-30.0,-20.0,-10.0,0.0,10.0,20.0 alignment.type=PPFE seed=27,42,100,123,144,200 simulation=accuracyVSsnr
+python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=32 sim.meta_atoms_intermediate_y=32 channel.snr_db=-30.0,-20.0,-10.0,0.0,10.0,20.0,30.0 alignment.type=PPFE,Linear seed=27,42,100,123,144,200 simulation=accuracyVSsnr
 
 # SIM Meta Atoms Intermediate Layers 64x64
-python scripts/classification.py -m sim.layers=5,10 sim.meta_atoms_intermediate_x=64 sim.meta_atoms_intermediate_y=64 channel.snr_db=-30.0,-20.0,-10.0,0.0,10.0,20.0 alignment.type=PPFE seed=27,42,100,123,144,200 simulation=accuracyVSsnr
+python scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=64 sim.meta_atoms_intermediate_y=64 channel.snr_db=-30.0,-20.0,-10.0,0.0,10.0,20.0,30.0 alignment.type=PPFE,Linear seed=27,42,100,123,144,200 simulation=accuracyVSsnr
 ```
 
 ```bash
 # SIM Meta Atoms Intermediate Layers 16x16
-uv run scripts/classification.py -m sim.layers=5,10 sim.meta_atoms_intermediate_x=16 sim.meta_atoms_intermediate_y=16 channel.snr_db=-30.0,-20.0,-10.0,0.0,10.0,20.0 alignment.type=PPFE seed=27,42,100,123,144,200 simulation=accuracyVSsnr
+uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=16 sim.meta_atoms_intermediate_y=16 channel.snr_db=-30.0,-20.0,-10.0,0.0,10.0,20.0,30.0 alignment.type=PPFE,Linear seed=27,42,100,123,144,200 simulation=accuracyVSsnr
 
 # SIM Meta Atoms Intermediate Layers 32x32
-uv run scripts/classification.py -m sim.layers=5,10 sim.meta_atoms_intermediate_x=32 sim.meta_atoms_intermediate_y=32 channel.snr_db=-30.0,-20.0,-10.0,0.0,10.0,20.0 alignment.type=PPFE seed=27,42,100,123,144,200 simulation=accuracyVSsnr
+uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=32 sim.meta_atoms_intermediate_y=32 channel.snr_db=-30.0,-20.0,-10.0,0.0,10.0,20.0,30.0 alignment.type=PPFE,Linear seed=27,42,100,123,144,200 simulation=accuracyVSsnr
 
 # SIM Meta Atoms Intermediate Layers 64x64
-uv run scripts/classification.py -m sim.layers=5,10 sim.meta_atoms_intermediate_x=64 sim.meta_atoms_intermediate_y=64 channel.snr_db=-30.0,-20.0,-10.0,0.0,10.0,20.0 alignment.type=PPFE seed=27,42,100,123,144,200 simulation=accuracyVSsnr
+uv run scripts/classification.py -m sim.layers=10 sim.meta_atoms_intermediate_x=64 sim.meta_atoms_intermediate_y=64 channel.snr_db=-30.0,-20.0,-10.0,0.0,10.0,20.0,30.0 alignment.type=PPFE,Linear seed=27,42,100,123,144,200 simulation=accuracyVSsnr
 ```
 
 ### Accuracy Vs Thickness

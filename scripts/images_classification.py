@@ -50,6 +50,8 @@ def accuracy_vs_simlayers(
         style='Alignment Type',
         markers=True,
         dashes=True,
+        # zorder=5,
+        # clip_on=False,
     )
 
     line1 = plt.axhline(
@@ -213,11 +215,14 @@ def accuracy_vs_thickness(
         .with_columns(
             (pl.col('Thickness Multiplier') * pl.col('SIM Wavelength')).alias(
                 'SIM Layer Distance'
-            )
+            ),
         )
     )
 
-    ticks = df['SIM Layer Distance'].unique().to_list()
+    ticks = (
+        df['Thickness Multiplier'].unique().sort(descending=False).to_list()
+    )
+    ticks_labels = [rf'{tick}$\lambda$' for tick in ticks]
 
     original_acc = (
         df.select('Accuracy No Mismatch')
@@ -233,12 +238,14 @@ def accuracy_vs_thickness(
 
     ax = sns.lineplot(
         df.drop('SIM Training Loss'),
-        x='SIM Layer Distance',
+        x='Thickness Multiplier',
         y='Accuracy SIM Mimo',
         hue='Intermediate Layers Atoms',
         style='Amplification',
         markers=True,
         dashes=True,
+        # zorder=5,
+        # clip_on=False,
     )
 
     line1 = plt.axhline(
@@ -323,9 +330,11 @@ def accuracy_vs_thickness(
         borderpad=0.5,
     )
 
+    ax.tick_params(axis='y', pad=10)
+
     plt.xlabel(r'$s_{\mathrm{layer}}$')
     plt.ylabel('Accuracy')
-    plt.xticks(ticks, labels=ticks)
+    plt.xticks(ticks, labels=ticks_labels)
     plt.xlim(min(ticks), max(ticks))
     plt.ylim(None, 1.0)
     plt.savefig(
@@ -347,6 +356,7 @@ def accuracy_vs_snr(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
     """ """
     filter = (
         (pl.col('Simulation') == 'accuracyVSsnr')
+        & (pl.col('SIM Layers') == 10)
         &
         # (pl.col('Weighted').is_null()) &
         (pl.col('Dataset') == dataset)
@@ -363,15 +373,10 @@ def accuracy_vs_snr(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
         .item()
     )
 
-    original_acc_no_mimo = (
-        df.select('Accuracy Original No Mimo')
-        .unique('Accuracy Original No Mimo')
-        .mean()
-        .item()
-    )
-
-    alignment_type = (
-        df.select('Alignment Type').unique('Alignment Type').item()
+    acc_original_no_mimo = dict(
+        df.group_by('Alignment Type')
+        .agg(pl.col('Accuracy Original No Mimo').mean())
+        .rows()
     )
 
     ax = sns.lineplot(
@@ -379,7 +384,7 @@ def accuracy_vs_snr(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
         x='SNR [dB]',
         y='Accuracy SIM Mimo',
         hue='Intermediate Layers Atoms',
-        style='SIM Layers',
+        style='Alignment Type',
         markers=True,
         dashes=True,
     )
@@ -393,11 +398,19 @@ def accuracy_vs_snr(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
     )
 
     line2 = plt.axhline(
-        y=original_acc_no_mimo,
+        y=acc_original_no_mimo['Linear'],
+        color='gray',
+        linestyle='-.',
+        linewidth=2,
+        label='Original Linear',
+    )
+
+    line3 = plt.axhline(
+        y=acc_original_no_mimo['PPFE'],
         color='gray',
         linestyle=':',
-        label='Original ' + alignment_type,
         linewidth=2,
+        label='Original PPFE',
     )
 
     # Get all handles and labels
@@ -407,24 +420,25 @@ def accuracy_vs_snr(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
         df.filter(filter)['Intermediate Layers Atoms'].unique().to_list()
     )
 
-    num_layers_labels = df.filter(filter)['SIM Layers'].unique().to_list()
+    alignment_type_labels = (
+        df.filter(filter)['Alignment Type'].unique().to_list()
+    )
 
     layer_labels = sorted(layer_labels)
-    num_layers_labels = sorted(num_layers_labels)
+    alignment_type_labels = sorted(alignment_type_labels)
 
     layer_handles = [handles[labels.index(cl)] for cl in layer_labels]
-    num_layers_handles = [
-        handles[labels.index(str(cl))] for cl in num_layers_labels
+    alignment_type_handles = [
+        handles[labels.index(str(cl))] for cl in alignment_type_labels
     ]
 
     legend1 = ax.legend(
-        num_layers_handles,
-        num_layers_labels,
-        title=r'SIM Layers $L$',
+        alignment_type_handles,
+        alignment_type_labels,
+        title='Alignment Type',
         ncol=2,
         loc='upper center',
-        # bbox_to_anchor=(0.57, 0.18),
-        bbox_to_anchor=(0.41, 0.18),
+        bbox_to_anchor=(0.16, 0.88),
         frameon=True,
         framealpha=1,
     )
@@ -448,11 +462,12 @@ def accuracy_vs_snr(df: pl.DataFrame, dataset: str, img_path: Path) -> None:
         handles=[
             line1,
             line2,
+            line3,
         ],
         title='',
         loc='upper center',
         bbox_to_anchor=(0.5, 1.12),
-        ncol=2,
+        ncol=3,
         frameon=True,
         framealpha=1,
         borderpad=0.5,

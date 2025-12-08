@@ -3,7 +3,7 @@
 <h5 align="center">
      
  
-[![arXiv](https://img.shields.io/badge/Arxiv-1111.11111-b31b1b.svg?logo=arXiv)](https://arxiv.org/abs/1111.11111)
+[![arXiv](https://img.shields.io/badge/Arxiv-2512.05657-b31b1b.svg?logo=arXiv)](https://arxiv.org/abs/2512.05657)
 [![License](https://img.shields.io/badge/Code%20License-MIT-yellow)](https://github.com/SPAICOM/semantic-alignment-via-sim/blob/main/LICENSE)
 
  <br>
@@ -154,6 +154,22 @@ uv sync
 This will automatically create a virtual environment (if none exists) and install all dependencies.  
 
 You're ready to go! 🚀  
+
+## Citation
+
+If you find this code useful for your research, please consider citing the following paper:
+
+```
+@misc{pandolfo2025overtheairsemanticalignmentstacked,
+      title={Over-the-Air Semantic Alignment with Stacked Intelligent Metasurfaces}, 
+      author={Mario Edoardo Pandolfo and Kyriakos Stylianopoulos and George C. Alexandropoulos and Paolo Di Lorenzo},
+      year={2025},
+      eprint={2512.05657},
+      archivePrefix={arXiv},
+      primaryClass={eess.SP},
+      url={https://arxiv.org/abs/2512.05657}, 
+}
+```
 
 ## Authors
 

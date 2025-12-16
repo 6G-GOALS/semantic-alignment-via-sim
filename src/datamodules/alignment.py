@@ -1,6 +1,8 @@
 """In this python module we define class that handles the dataset:
 - DatasetAlignmentClassification: a custom Pytorch Dataset for encoding from an absolute representation to a relative one.
+- DatasetAlignmentReconstruction: a custom Pytorch Dataset for encoding from an absolute representation to a relative one.
 - DataModuleAlignmentClassification: a Pytorch Lightning Data Module for the Relative Encoder.
+- DataModuleAlignmentReconstruction: a Pytorch Lightning Data Module for the Relative Encoder.
 """
 
 import torch
@@ -9,15 +11,9 @@ from sklearn.cluster import KMeans
 from torch.utils.data import Dataset, DataLoader
 from pytorch_lightning import LightningDataModule
 
-
-if __name__ == '__main__':
-    from download_utils import (
-        download_zip_from_gdrive,
-    )
-else:
-    from src.datamodules.download_utils import (
-        download_zip_from_gdrive,
-    )
+from src.download_utils import (
+    download_zip_from_gdrive,
+)
 
 
 # =====================================================
@@ -364,37 +360,5 @@ class DataModuleAlignmentClassification(LightningDataModule):
         )
 
 
-def main() -> None:
-    """The main script loop in which we perform some sanity tests."""
-    print('Start performing sanity tests...')
-    print()
-
-    # Setting inputs
-    dataset = 'cifar10'
-
-    print('Running first test...', end='\t')
-    tx_enc = 'vit_small_patch16_224'
-    rx_enc = 'vit_base_patch16_224'
-    train_label_size = 1000
-    method = 'centroid'
-    data = DataModuleAlignmentClassification(
-        dataset=dataset,
-        tx_enc=tx_enc,
-        rx_enc=rx_enc,
-        train_label_size=train_label_size,
-        method=method,
-    )
-
-    data.prepare_data()
-    data.setup()
-    next(iter(data.train_dataloader()))
-    next(iter(data.test_dataloader()))
-    next(iter(data.val_dataloader()))
-
-    print('[Passed]')
-
-    return None
-
-
 if __name__ == '__main__':
-    main()
+    pass

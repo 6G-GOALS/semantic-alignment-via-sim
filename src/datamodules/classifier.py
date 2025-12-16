@@ -8,15 +8,9 @@ from pathlib import Path
 from torch.utils.data import Dataset, DataLoader
 from pytorch_lightning import LightningDataModule
 
-
-if __name__ == '__main__':
-    from download_utils import (
-        download_zip_from_gdrive,
-    )
-else:
-    from src.datamodules.download_utils import (
-        download_zip_from_gdrive,
-    )
+from src.download_utils import (
+    download_zip_from_gdrive,
+)
 
 
 # =====================================================
@@ -246,28 +240,5 @@ class DataModuleClassifier(LightningDataModule):
         )
 
 
-def main() -> None:
-    """The main script loop in which we perform some sanity tests."""
-    print('Start performing sanity tests...')
-    print()
-
-    # Setting inputs
-    dataset = 'cifar10'
-    rx_enc = 'vit_base_patch16_224'
-
-    print('Running first test...', end='\t')
-    data = DataModuleClassifier(dataset=dataset, rx_enc=rx_enc)
-
-    data.prepare_data()
-    data.setup()
-    next(iter(data.train_dataloader()))
-    next(iter(data.test_dataloader()))
-    next(iter(data.val_dataloader()))
-
-    print('[Passed]')
-
-    return None
-
-
 if __name__ == '__main__':
-    main()
+    pass

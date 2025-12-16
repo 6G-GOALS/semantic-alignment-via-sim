@@ -115,6 +115,16 @@ def main() -> None:
         '-o',
         '--org',
         help='The organization of wandb where the models are saved.',
+        required=True,
+        type=str,
+    )
+
+    parser.add_argument(
+        '-t',
+        '--type',
+        help='The typology of models to download.',
+        choices={'classifier'},
+        default='classifier',
         type=str,
     )
 
@@ -146,6 +156,7 @@ def main() -> None:
                             seed=seed,
                             session=run,
                         )
+
     # Close wandb
     wandb.finish()
 

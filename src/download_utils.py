@@ -3,6 +3,7 @@
 from pathlib import Path
 from gdown import download
 from zipfile import ZipFile
+from dotenv import dotenv_values
 
 # =======================================================
 #
@@ -52,6 +53,35 @@ def download_zip_from_gdrive(
     return None
 
 
+def download_models_ckpt(
+    models_path: Path,
+    model_name: str,
+) -> None:
+    """This function donwloads the ckpt and setups a model repository:
+
+    Args:
+        models_path : Path
+            The path to the models
+
+    Returns:
+        None
+    """
+    print()
+    print('Start setup procedure...')
+
+    print()
+    print('Check for the classifiers model availability...')
+    # Download the classifiers if needed
+    # Get from the .env file the zip file Google Drive ID
+    id = dotenv_values()['MODELS_ID']
+    download_zip_from_gdrive(id=id, name=model_name, path=str(models_path))
+
+    print()
+    print('All done.')
+    print()
+    return None
+
+
 # =======================================================
 #
 #                     MAIN LOOP
@@ -63,12 +93,16 @@ def main() -> None:
     """Test loop."""
     print('Start performing sanity tests...')
     print()
-
-    from dotenv import dotenv_values
+    CURRENT: Path = Path('.')
+    MODELS_PATH: Path = CURRENT / 'models'
 
     print('Running first test...', end='\t')
-    id = dotenv_values()
+    id = dotenv_values()['DATA_ID']
     download_zip_from_gdrive(id=id, path='data', name='latents')
+    print('[Passed]')
+
+    print('Running first test...', end='\t')
+    download_models_ckpt(models_path=MODELS_PATH, model_name='classifiers')
     print('[Passed]')
 
     return None

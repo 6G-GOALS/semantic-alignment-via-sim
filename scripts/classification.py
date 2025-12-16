@@ -16,6 +16,7 @@ from pytorch_lightning import seed_everything, Trainer
 from torch.utils.data import TensorDataset, DataLoader
 
 from src.sim import SIMoptimizerTorch
+from src.download_utils import download_models_ckpt
 from src.models_tasks.classification import Classifier
 from src.datamodules.alignment import DataModuleAlignmentClassification
 from src.alignment_utils import (
@@ -55,6 +56,9 @@ def main(cfg: DictConfig) -> None:
 
     # Create directories
     RESULTS_PATH.mkdir(exist_ok=True, parents=True)
+
+    # Ensure models ckpt are in the path
+    download_models_ckpt(models_path=MODEL_PATH, model_name='classifiers')
 
     # Safe way to avoid duplicate registration
     if not OmegaConf.has_resolver('eval'):
@@ -364,7 +368,7 @@ def main(cfg: DictConfig) -> None:
     # y_hat = simA @ test_input
     y_hat = G @ test_input
     y_hat = beta * y_hat
-    
+
     # Dewhitening
     y_hat = L_output @ y_hat + mean_output
 
@@ -401,7 +405,7 @@ def main(cfg: DictConfig) -> None:
     y_hat = channel @ y_hat
     if cfg.channel.snr_db is not None:
         _, n = y_hat.shape
-        
+
         snr_linear = math.pow(10, cfg.channel.snr_db / 10)
 
         channel_pinv = torch.linalg.pinv(channel)
@@ -413,7 +417,7 @@ def main(cfg: DictConfig) -> None:
 
         # Get the AWGN
         w = awgn(sigma, size=y_hat.shape, device=cfg.device)
-        
+
         # Add AWGN
         y_hat += w
 

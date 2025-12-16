@@ -1,8 +1,6 @@
 """In this python module we define class that handles the dataset:
 - DatasetAlignmentClassification: a custom Pytorch Dataset for encoding from an absolute representation to a relative one.
-- DatasetAlignmentReconstruction: a custom Pytorch Dataset for encoding from an absolute representation to a relative one.
 - DataModuleAlignmentClassification: a Pytorch Lightning Data Module for the Relative Encoder.
-- DataModuleAlignmentReconstruction: a Pytorch Lightning Data Module for the Relative Encoder.
 """
 
 import torch

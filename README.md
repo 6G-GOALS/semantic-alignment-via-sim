@@ -173,10 +173,10 @@ If you find this code useful for your research, please consider citing the follo
 
 ## Authors
 
-- [Mario Edoardo Pandolfo](https://scholar.google.com/citations?user=wAeScL8AAAAJ&hl)
-- [Kyriakos Stylianopoulos](https://scholar.google.com/citations?user=42KAgRMAAAAJ&hl=it&oi=ao)
-- [George C. Alexandropoulos](https://scholar.google.com/citations?hl=it&user=3Ltyd9sAAAAJ)
-- [Paolo Di Lorenzo](https://scholar.google.com/citations?hl=en&user=VZYvspQAAAAJ)
+- [Mario Edoardo Pandolfo](https://scholar.google.com/citations?user=wAeScL8AAAAJ)
+- [Kyriakos Stylianopoulos](https://scholar.google.com/citations?user=42KAgRMAAAAJ)
+- [George C. Alexandropoulos](https://scholar.google.com/citations?user=3Ltyd9sAAAAJ)
+- [Paolo Di Lorenzo](https://scholar.google.com/citations?&user=VZYvspQAAAAJ)
 
 ## Used Technologies
 
